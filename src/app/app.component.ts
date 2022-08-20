@@ -23,7 +23,11 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   x:number;
   y:number;
   hm:Map<string, BoardColor> = new Map<string, BoardColor>();
-
+  private addN(id:number){
+    if(!this.hm.has(id+'')){
+      this.n.push({id:id+'', label:'s', dimension:{width:200, height:200}});
+    }
+  }
   ngAfterViewInit(){
     var green:string = "#75FF33";
     var yellow = "#FFB633";
@@ -52,11 +56,12 @@ export class AppComponent implements AfterViewInit, OnDestroy{
       tap((x:usrRtn|SearchNode[])=>{
         if (!Array.isArray(x)){
           if(this.n.length!= 0){
+            this.addN(x.sn.id);
             this.hm.set(x.sn.id+"", {color: orange, board:x.sn.board.board()});
-            this.n.push({id:x.sn.id+'', label:'s', dimension:{width:200, height:200}});
+
           } else {
+            this.addN(x.sn.id);
             this.hm.set(x.sn.id+"", {color:orange, board:x.sn.board.board()});
-            this.n.push({id:x.sn.id+'', label:'s', dimension:{width:200, height:200}});
           }
           for(var i of x.posibleNodes){
             this.l.push({
@@ -67,8 +72,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
             });
           }
           for(var i of x.posibleNodes){
+            this.addN(i.id);
             this.hm.set(i.id+"", {color:yellow, board:i.board.board()});
-            this.n.push({id:i.id+'', label:'s'+i.id, dimension:{width:200, height:200}});
+
           }
           this.update$.next(true);
           this.zoomToFit$.next(true);
