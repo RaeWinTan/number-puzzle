@@ -70,7 +70,9 @@ export class Board{
     var temp:Board =  y;
     for (var i:number = 0; i < this.dimension(); i++) {
         for (var j:number = 0; j < this.dimension(); j++) {
-            if (temp.t[i][j] != this.t[i][j]) return false;
+            if (temp.t[i][j] != this.t[i][j]) {
+                return false;
+            }
         }
     }
     return true;

@@ -21,19 +21,25 @@ export class SearchNode{
     this.priority = this.board.manhattan() + this.moveNo;
   }
 }
+export interface usrRtn{
+  sn:SearchNode;
+  posibleNodes:SearchNode[];
+}
 interface RunningProgress{
   curr1:SearchNode;
   curr2:SearchNode;
   id1:number;
   id2:number;
   count:number;
+  posibleNodes:SearchNode[];
 }
 interface RunningNode{
   curr1:SearchNode;
   id1:number;
 }
+
 export class Solver{
-  public algorithm$:Observable<SearchNode|SearchNode[]>;
+  public algorithm$:Observable<SearchNode|SearchNode[]|usrRtn>;
   constructor(initial:Board){
     const comparator:IGetCompareValue<SearchNode> = (x:SearchNode) => x.priority;
     this.algorithm$ = of([new MinPriorityQueue<SearchNode>(comparator), new MinPriorityQueue<SearchNode>(comparator)]).pipe(
@@ -44,19 +50,21 @@ export class Solver{
       }),
       concatMap((pq:MinPriorityQueue<SearchNode>[])=>{
         //just have a coutner once it reaches 2 just exit loop
-        return generate({curr1:pq[0].front(), curr2:pq[1].front(), id1:2, id2:2, count:0},
+        return generate({curr1:pq[0].front(), curr2:pq[1].front(), id1:2, id2:2, count:0,posibleNodes:[]},
         (x:RunningProgress)=>x.count <  1,
         (x:RunningProgress) =>{
-            if (x.count == 1) return {curr1: null, curr2:null, id1:0, id2:0, count:2};
-            if (x.curr1.board.isGoal() || x.curr2.board.isGoal()) return {curr1:x.curr1, curr2:x.curr2, id1:0, id2:0, count:1};
+            if (x.count == 1) return {curr1: null, curr2:null, id1:0, id2:0, count:2,posibleNodes:[]};
+            if (x.curr1.board.isGoal() || x.curr2.board.isGoal()) return {curr1:x.curr1, curr2:x.curr2, id1:0, id2:0, count:1,posibleNodes:[]};
             var tmpId1:number = x.id1;
             var tmpId2:number = x.id2;
             var curr1: SearchNode = pq[0].dequeue();
             var curr2: SearchNode = pq[1].dequeue();
+            var posible: SearchNode[] = [];
             for (var i of curr1.board.neighbors()){
               if (curr1.prevNode == null || !i.equals(curr1.prevNode.board)){
                 var sd:SearchNode = new SearchNode(curr1, i, ++tmpId1);
                 pq[0].enqueue(sd);
+                posible.push(sd);
               }
             }
             for (var i of curr2.board.neighbors()){
@@ -65,7 +73,7 @@ export class Solver{
                 pq[1].enqueue(sd);
               }
             }
-            return {curr1:curr1, curr2:curr2, id1:tmpId1, id2:tmpId2, count:0};
+            return {curr1:curr1, curr2:curr2, id1:tmpId1, id2:tmpId2, count:0,posibleNodes:posible};
         }).pipe(
           skip(1),
           mergeMap((v:RunningProgress)=>{
@@ -80,9 +88,14 @@ export class Solver{
                   node = node.prevNode;
                 } while(node!=null && node.prevNode!=null);
                 while(tmpStep.size != 0) solution.push(tmpStep.pop());
-                return concat(of(v).pipe(map((s:RunningProgress)=>v.curr1)), of(solution));
+                //stopped here
+                return concat(of(v).pipe(map((s:RunningProgress)=>{
+                  return {sn:s.curr1, posibleNodes:s.posibleNodes};
+                })), of(solution));
               }
-              return of(v).pipe(map((s:RunningProgress)=>s.curr1));
+              return of(v).pipe(map((s:RunningProgress)=>{
+                return {sn:s.curr1, posibleNodes:s.posibleNodes};
+              }));
             }
             else{
               return throwError("UNSOLVABLE");
