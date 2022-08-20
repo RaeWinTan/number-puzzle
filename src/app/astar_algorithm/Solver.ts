@@ -86,11 +86,11 @@ export class Solver{
                 do {
                   tmpStep.push(node);
                   node = node.prevNode;
-                } while(node!=null && node.prevNode!=null);
+                } while(node!=null);
                 while(tmpStep.size != 0) solution.push(tmpStep.pop());
                 //stopped here
                 return concat(of(v).pipe(map((s:RunningProgress)=>{
-                  return {sn:s.curr1, posibleNodes:s.posibleNodes};
+                  return {sn:s.curr1, posibleNodes:[]};
                 })), of(solution));
               }
               return of(v).pipe(map((s:RunningProgress)=>{
