@@ -12,6 +12,7 @@ export class Board{
       }
     }
   }
+
   board():number[][]{
     return this.t;
   }

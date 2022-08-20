@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Edge, Node } from '@swimlane/ngx-graph';
-import {  timer, Subject, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {  timer, Subject, Subscription, interval, of } from 'rxjs';
+import { tap, take, concatMap, delay, scan } from 'rxjs/operators';
 
 import { Board } from './astar_algorithm/Board';
 import { Solver, SearchNode } from './astar_algorithm/Solver';
@@ -11,41 +11,21 @@ import { Solver, SearchNode } from './astar_algorithm/Solver';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent implements AfterViewInit, OnDestroy{
   title = 'number-puzzle';
   update$: Subject<boolean> = new Subject();
+  zoomToFit$:Subject<boolean> = new Subject();
   subscripion: Subscription[];
-  lv:Edge[] = [
-    {
-      id: 'a',
-      source: '1',
-      target: '2'
-    }, {
-      id: 'b',
-      source: '1',
-      target: '3'
-    }, {
-      id: 'c',
-      source: '3',
-      target: '4'
-    }, {
-      id: 'd',
-      source: '3',
-      target: '5'
-    }, {
-      id: 'e',
-      source: '4',
-      target: '5'
-    }, {
-      id: 'f',
-      source: '2',
-      target: '6'
-    }
-  ]; //testing
+
   l:Edge[];
   n:Node[];
+  x:number;
+  y:number;
+  hm:IHash = {};
   ngAfterViewInit(){
     /*
+    //visualization code
     this.subscripion.push(
       from(this.lv).pipe(
         concatMap((e:Edge)=>timer(1000).pipe(map(()=>e)))
@@ -60,45 +40,63 @@ export class AppComponent implements AfterViewInit, OnDestroy{
       [9,10,7,11],
       [13,14,15,12]
     ];
-    
+
     var b:Board = new Board(matrix);
     //newly produced
     //prospective solution(curretn min)
+    var s:Solver = new Solver(b);
+    var lId:number = 0;
+    var alg$:Subscription = s.algorithm$
+    .pipe(concatMap((i:SearchNode|SearchNode[])=>of(i).pipe(delay(1000)))).subscribe(
+      (x:SearchNode|SearchNode[])=>{
+        if (Array.isArray(x)){
 
-    var processing$:Subject<SearchNode> = new Subject<SearchNode>();
-    var s:Solver = new Solver(b, processing$);
-    for (var x of s.solution()) console.log(x.toString());
+        } else {
+          if(this.n.length!= 0){
+            this.hm[x.id+""] = x.board.board();
+            this.n.push({id:x.id+'', label:'s'+x.id, dimension:{width:200, height:200}});
+            this.update$.next(true);
+            //this.zoomToFit$.next(true);
+            this.l.push({
+              label:"Edge"+lId,
+              id:"Edge"+lId,
+              source:''+x.prevNode.id,
+              target:''+x.id
+            });
+            lId++;
+          } else {
+            this.hm[x.id+""] = x.board.board();
+            this.n.push({id:x.id+'', label:'s', dimension:{width:200, height:200}});
+
+          }
+          this.update$.next(true);
+          //this.zoomToFit$.next(true);
+        }
+      }
+    );
+    this.subscripion.push(
+      alg$
+    )
+
 
   }
   ngOnDestroy(){
     for(const sub of this.subscripion){
       sub.unsubscribe();
     }
-    this.subscripion = [];
+    this.subscripion = null;
   }
   constructor(){
+    this.x = 0;
+    this.y = 0;
+
     this.l = [];
     this.n = [
-      {
-        id: '1',
-        label: `Node A`
-      }, {
-        id: '2',
-        label: 'Node B'
-      }, {
-        id: '3',
-        label: 'Node C'
-      }, {
-        id: '4',
-        label: 'Node D'
-      }, {
-        id: '5',
-        label: 'Node E'
-      }, {
-        id: '6',
-        label: 'Node F'
-      }
+
     ];
     this.subscripion = [];
   }
+}
+interface IHash {
+  [details:string]:number[][];
 }
