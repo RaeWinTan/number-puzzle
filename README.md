@@ -1,7 +1,7 @@
-#About
+# About
 Web project is a visual representation of the A* search algorithm to solve the famous 8 puzzle game.
 
-#Develop Locally
+# Develop Locally
 cd to the Angular project
 run the following steps
 `npm install`
