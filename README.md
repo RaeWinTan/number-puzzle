@@ -1,13 +1,13 @@
 # About
-Web project is a visual representation of the A* search algorithm to solve the famous 8 puzzle game.
+Web project is a visual representation of using the A* search algorithm to solve the famous 8 puzzle game.
 
 # Develop Locally
 cd to the Angular project
 run the following steps
-`npm install`
-`npm run start`
+1. `npm install`
+2. `npm run start`
 
-#Credits
+# Credits
 This project was inspired by the [Coursera's Princeton Algorithms 1 course](https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/specification.php)
 
 
