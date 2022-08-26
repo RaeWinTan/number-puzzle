@@ -10,37 +10,58 @@
         </div>
         <app-board-input (inputBoard)="setBoard($event)">
         </app-board-input>
-        <ul class="list-group">
-          <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto w-100">
-              <div class="font-weight-bold">Filling up board</div>
-                <ol class="list-group">
-                  <li class="list-group-item">To overwrite a cell just keep typing numbers. Each cell can at most hold an integer containing two digits any more and the cell will refresh.</li>
-                  <li class="list-group-item">Alternatively click on <strong>Random Generate Board</strong>.</li>
-                </ol>
-            </div>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-start">
-            <div class="ms-2 me-auto w-100">
-              <div class="font-weight-bold">About the graph</div>
-                <ol class="list-group">
-                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#808080" /></svg>
-                    Path taken so far. (or SearchNode that is pruned out of the priority queue of the A* algorithm)
-                  </li>
-                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#E77500" /></svg>
-                    The SearchNode the computer is currently at.
-                  </li>
-                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#FFB633" /></svg>
-                    Prospective SearchNode the computer may process. (AKA leaf node)
-                  </li>
-                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#75FF33" /></svg>
-                    The best solution to solve the puzzle.
-                  </li>
-                </ol>
-            </div>
-          </li>
-        </ul>
       </div>
+      <div class="form-group row">
+        <label for="speedInput" class="col-sm-3 col-form-label">SPEED</label>
+        <div class="col-sm-9">
+          <input [(ngModel)]="speed" type="range" class="form-range form-control" min="1" max="10" step="1" id="speedInput">
+        </div>
+      </div>
+        <div class="form-group">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto w-100">
+                <div class="font-weight-bold">Filling up board</div>
+                  <ol class="list-group">
+                    <li class="list-group-item">To overwrite a cell just keep typing numbers. Each cell can at most hold an integer containing two digits any more and the cell will refresh.</li>
+                    <li class="list-group-item">Alternatively click on <strong>Random Generate Board</strong>.</li>
+                  </ol>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto w-100">
+                <div class="font-weight-bold">About the graph</div>
+                  <ol class="list-group">
+                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#808080" /></svg>
+                      Path taken so far. (or SearchNode that is pruned out of the priority queue of the A* algorithm)
+                    </li>
+                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#E77500" /></svg>
+                      The SearchNode the computer is currently at.
+                    </li>
+                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#FFB633" /></svg>
+                      Prospective SearchNode the computer may process. (AKA leaf node)
+                    </li>
+                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#75FF33" /></svg>
+                      The best solution to solve the puzzle.
+                    </li>
+                  </ol>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto w-100">
+                <div class="font-weight-bold text-warning">Warning</div>
+                  <ol class="list-group">
+                    <li class="list-group-item">
+                      The bottleneck of this visualization of the A* algorithm is the visualization. The graph can only take so much nodes before it starts to crash.
+                    </li>
+                    <li class="list-group-item">
+                      Therefore, it is best to use the random generate board function over the customized board(which may take too many steps to solve).
+                    </li>
+                  </ol>
+              </div>
+            </li>
+          </ul>
+          </div>
   </div>
 </div>
 <!-- h-100 d-flex justify-content-center align-items-center-->

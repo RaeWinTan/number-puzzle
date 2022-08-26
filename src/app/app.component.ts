@@ -1,10 +1,31 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Edge, Node, MiniMapPosition } from '@swimlane/ngx-graph';
 import { Subject, Subscription,  of, Observable } from 'rxjs';
-import { tap,  concatMap, delay , scan, switchMap} from 'rxjs/operators';
+import { tap,  concatMap, delay , scan, switchMap, catchError} from 'rxjs/operators';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import { Board } from './astar_algorithm/Board';
 import { Solver, SearchNode, usrRtn } from './astar_algorithm/Solver';
+
+@Component({
+  selector: 'ngbd-modal-content',
+  template: `
+    <div class="modal-header">
+      <h4 class="modal-title text-danger">ERROR</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p>Puzzle is unsolvable</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+    </div>
+  `
+})
+export class NgbdModalContent {
+
+  constructor(public activeModal: NgbActiveModal) {}
+}
 
 @Component({
   selector: 'app-root',
@@ -22,12 +43,14 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   l:Edge[];
   n:Node[];
   hm:Map<string, BoardColor> = new Map<string, BoardColor>();
+  speed:number;
   private addN(id:number){
     if(!this.hm.has(id+'')){
       this.n.push({id:id+'', label:'s', dimension:{width:200, height:200}});
     }
   }
   ngAfterViewInit(){
+
     var green:string = "#75FF33";
     var yellow = "#FFB633";
     var grey = "#808080";
@@ -49,7 +72,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         concatMap(
           (i:usrRtn|SearchNode[])=>
             of(i).pipe(
-              delay(250)
+              delay((10-this.speed  +1)* 100)
             )
         ),
         tap((x:usrRtn|SearchNode[])=>{
@@ -88,12 +111,16 @@ export class AppComponent implements AfterViewInit, OnDestroy{
           }
           acc = x;
           return x;
+        }),
+        catchError((val)=>{
+          this.modalService.open(NgbdModalContent);
+          return of({});
         })
       );
     }));
     this.subscripion.push(
       alg$.subscribe(()=>{},(err:any)=>{
-        console.log(err);
+        this.modalService.open(NgbdModalContent);
       })
     );
   }
@@ -106,10 +133,11 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     }
     this.subscripion = null;
   }
-  constructor(){
+  constructor(private modalService: NgbModal){
     this.l = [];
     this.n = [];
     this.subscripion = [];
+    this.speed = 1;
   }
 }
 

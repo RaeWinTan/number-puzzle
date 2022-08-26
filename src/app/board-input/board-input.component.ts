@@ -56,6 +56,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     this.cx = canvasEl.getContext('2d');
     this.myCanvas.nativeElement.width = this.n * this.cellSide;
     this.myCanvas.nativeElement.height = this.n * this.cellSide;
+
     this.drawBorder();
     const keyUp$:Observable<KeyboardEvent> = fromEvent<KeyboardEvent>(document, 'keyup');
     const fillBox$=(acc:any):Observable<KeyboardEvent>=>keyUp$.pipe(
@@ -86,6 +87,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     this.subscription.push(
       mouseDown$.pipe(
           map((e: MouseEvent) => {
+            console.log(e.offsetX, e.offsetY);
             return {
               x: Math.floor(e.offsetX / 50),
               y: Math.floor(e.offsetY / 50),
