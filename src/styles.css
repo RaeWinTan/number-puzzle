@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+    height: 100%;
+}
+.infobtn {
+  position: fixed;
+  right: 0;
+  z-index: 1;
+  cursor:pointer;
+  width: 450px;
+  height:80%;
+}

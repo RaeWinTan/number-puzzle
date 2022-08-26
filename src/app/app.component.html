@@ -1,16 +1,97 @@
-
-<ngx-graph
-  [maxZoomLevel] = "1000"
-  [view]="[500, 500]"
-  layout="dagreCluster"
-  [links]="l"
-  [update$]="update$"
-  [nodes]="n"
-  [showMiniMap]="true"
-  [miniMapMaxHeight]="200"
-  [zoomToFit$]="zoomToFit$"
-  [miniMapPosition]="pos"
->
+<div class="container p-0 m-0 infobtn overflow-auto" >
+  <svg  data-toggle="collapse" href="#collapseExample"   xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle float-right" viewBox="0 0 16 16">
+    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+  </svg>
+  <div id="collapseExample" class="panel-collapse collapse show bg-transparent container float-left" >
+      <div class="form-group">
+        <div class="form-group row justify-content-center">
+          <label for="boardInput" class="font-weight-bold">4x4 Board to solve</label>
+        </div>
+        <app-board-input (inputBoard)="setBoard($event)">
+        </app-board-input>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto w-100">
+              <div class="font-weight-bold">Filling up board</div>
+                <ol class="list-group">
+                  <li class="list-group-item">To overwrite a cell just keep typing numbers. Each cell can at most hold an integer containing two digits any more and the cell will refresh.</li>
+                  <li class="list-group-item">Alternatively click on <strong>Random Generate Board</strong>.</li>
+                </ol>
+            </div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto w-100">
+              <div class="font-weight-bold">About the graph</div>
+                <ol class="list-group">
+                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#808080" /></svg>
+                    Path taken so far. (or SearchNode that is pruned out of the priority queue of the A* algorithm)
+                  </li>
+                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#E77500" /></svg>
+                    The SearchNode the computer is currently at.
+                  </li>
+                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#FFB633" /></svg>
+                    Prospective SearchNode the computer may process. (AKA leaf node)
+                  </li>
+                  <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#75FF33" /></svg>
+                    The best solution to solve the puzzle.
+                  </li>
+                </ol>
+            </div>
+          </li>
+        </ul>
+      </div>
+  </div>
+</div>
+<!-- h-100 d-flex justify-content-center align-items-center-->
+<div class="container h-100">
+  <div class="row h-100">
+    <div class="col-12 my-auto">
+        <div class=" d-flex align-items-center justify-content-center">
+          <ngx-graph
+            [maxZoomLevel] = "1000"
+            [view]="[700, 700]"
+            layout="dagreCluster"
+            [links]="l"
+            [update$]="update$"
+            [nodes]="n"
+            [showMiniMap]="true"
+            [miniMapMaxHeight]="200"
+            [zoomToFit$]="zoomToFit$"
+            [miniMapPosition]="pos"
+          >
+          <ng-template #defsTemplate>
+            <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+              <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+            </svg:marker>
+          </ng-template>
+          <ng-template #nodeTemplate let-node>
+            <svg width= "200" height = "200" viewBox="0 0 200 200">
+              <g *ngFor="let row of hm.get(node.id).board; let i = index">
+                <ng-container *ngFor="let col of row; let j = index">
+                  <rect  width="50" height="50" [attr.x]="j * 50" [attr.y]="i * 50" [attr.fill]="hm.get(node.id).color"></rect>
+                  <text  [attr.x]="j * 50 + 25" [attr.y]="i * 50 + 25" font-family="Verdana" font-size="25" fill="white"  dominant-baseline="middle"
+                  text-anchor="middle">{{col}}</text>
+                </ng-container>
+              </g>
+            </svg>
+            </ng-template>
+            <ng-template #linkTemplate let-link>
+              <svg:g class="edge">
+                <svg:path  class="line" stroke-width="2" marker-end="url(#arrow)">
+                </svg:path>
+                <svg:text class="edge-label" text-anchor="middle">
+                  <textPath style="font-size:20" class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                    {{link.label}}
+                  </textPath>
+                </svg:text>
+              </svg:g>
+            </ng-template>
+          </ngx-graph>
+        </div>
+    </div>
+  </div>
+</div>
 <!--
 https://htmlcolorcodes.com/color-picker/
 analagous colors
@@ -18,31 +99,3 @@ yellow: #FFB633
 orange: #FF5033
 blue: #5033FF
 -->
-<ng-template #defsTemplate>
-  <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
-    <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
-  </svg:marker>
-</ng-template>
-<ng-template #nodeTemplate let-node>
-  <svg width= "200" height = "200" viewBox="0 0 200 200">
-    <g *ngFor="let row of hm.get(node.id).board; let i = index">
-      <ng-container *ngFor="let col of row; let j = index">
-        <rect  width="50" height="50" [attr.x]="j * 50" [attr.y]="i * 50" [attr.fill]="hm.get(node.id).color"></rect>
-        <text  [attr.x]="j * 50 + 25" [attr.y]="i * 50 + 25" font-family="Verdana" font-size="25" fill="white"  dominant-baseline="middle"
-        text-anchor="middle">{{col}}</text>
-      </ng-container>
-    </g>
-  </svg>
-  </ng-template>
-  <ng-template #linkTemplate let-link>
-    <svg:g class="edge">
-      <svg:path  class="line" stroke-width="2" marker-end="url(#arrow)">
-      </svg:path>
-      <svg:text class="edge-label" text-anchor="middle">
-        <textPath style="font-size:20" class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
-          {{link.label}}
-        </textPath>
-      </svg:text>
-    </svg:g>
-  </ng-template>
-</ngx-graph>
