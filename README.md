@@ -1,7 +1,7 @@
 # About
 This Web project is a visual representation of the A* search algorithm in action to solve the famous 8 puzzle game.
 
-# Technological Stack
+# Technology Stack
 - Angular
 - RXJS 
 
