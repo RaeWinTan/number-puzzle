@@ -3,8 +3,8 @@ This Web project is a visual representation of the A* search algorithm in action
 
 # Technology Stack
 - Angular
-- RXJS 
-
+- RXJS
+- @swimlane/ngx-graph
 
 # To Develop Locally
 1. cd to the root of the Angular project
