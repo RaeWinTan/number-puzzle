@@ -52,22 +52,26 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     }
   }
   ngAfterViewInit(){
+    //initialing canvas drawing material
     const canvasEl: HTMLCanvasElement = this.myCanvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
     this.myCanvas.nativeElement.width = this.n * this.cellSide;
     this.myCanvas.nativeElement.height = this.n * this.cellSide;
-
     this.drawBorder();
     const keyUp$:Observable<KeyboardEvent> = fromEvent<KeyboardEvent>(document, 'keyup');
+    //observable to fill up grid
     const fillBox$=(acc:any):Observable<KeyboardEvent>=>keyUp$.pipe(
+        //only read number inputs from user
         filter((k:KeyboardEvent)=>Number(k.key)==0 || !!Number(k.key)),
         tap((k:KeyboardEvent)=>{
-          if(this.matrix[acc.y][acc.x] == 0 || !this.matrix[acc.y][acc.x]){
+          //writing number on canvas
+          if(this.matrix[acc.y][acc.x] == 0 || !this.matrix[acc.y][acc.x]){//first number on cell
             this.erase(acc);
             this.write(k.key, acc);
             this.shade(acc.x, acc.y);
             this.matrix[acc.y][acc.x] = Number(k.key);
           } else{
+            //subsequent numbesr on cells
             if (this.matrix[acc.y][acc.x] > 0 && this.matrix[acc.y][acc.x] < 10){
               this.erase(acc);
               this.matrix[acc.y][acc.x] *= 10;
@@ -87,19 +91,20 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     this.subscription.push(
       mouseDown$.pipe(
           map((e: MouseEvent) => {
-            console.log(e.offsetX, e.offsetY);
             return {
               x: Math.floor(e.offsetX / 50),
               y: Math.floor(e.offsetY / 50),
             };
           }),
           scan((acc: any, e: any) => {
+            //remove the light blue shade from the previously clicked cell
             this.erase(acc);
             if(!!this.matrix[acc.y][acc.x] || this.matrix[acc.y][acc.x] == 0) this.write(this.matrix[acc.y][acc.x]+'', acc);
             acc = e;
             return e;
           }),
           tap((e: any) => {
+            //shade light blue for grid cell user is currently working on
             var x: number = e.x;
             var y: number = e.y;
             this.shade(x, y);
@@ -111,13 +116,15 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     this.subscription.push(
       fromEvent(this.rdmBtn.nativeElement, "click").pipe(
         switchMap(()=>{
-          //'unsolvable'
-          var num = (Math.floor(Math.random() * 17) + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+          var num = (Math.floor(Math.random() * 22) + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+          //getting random unsolved puzzles from asset folder
           return this.httpClient.get(`assets/puzzle4x4-${num}.txt`, {responseType: 'text'}).pipe(
             tap((data:string)=>{
+              //parsing txt file to matrix form
               var d:any = data.trim().split('\n').splice(1).map(l=>l.trim().split(/\s+/));
               for(var r = 0; r<this.n; r++){
                 for(var c = 0; c < this.n; c++){
+                  //drawing matrix to grid
                   this.matrix[r][c] = Number(d[r][c]);
                   this.erase({x:c, y:r});
                   this.write(d[r][c], {x:c, y:r});
@@ -129,7 +136,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
       ).subscribe()
     );
   }
-  ngOnDestroy(){
+  ngOnDestroy(){//destroy subscriptions
     for(const sub of this.subscription){
       sub.unsubscribe();
     }
@@ -140,6 +147,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
       this.inputBoard.emit(this.matrix);
     }
   }
+  //validate the board, pretty self explainitory since error messages in string form
   checkFillBoard():boolean{
     let nums = new Set<number>();
     let es = new Set<string>();
@@ -183,6 +191,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
       this.cellSide-2,
       this.cellSide-2
     );
+    //set context back to usual settings
     this.cx.globalAlpha = 1;
     this.cx.fillStyle = 'black';
   }

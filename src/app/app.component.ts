@@ -57,13 +57,15 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     var orange = "#E77500";
 
 
-    var alg$:Observable<any> = this.matrix$.pipe(
+    var alg$:Observable<any> = this.matrix$.pipe(//get board matrix from board-input component
       tap(()=>{
+        //initializing data for ngx-graph
         this.hm = new Map<string, BoardColor>();
         this.l = [];
         this.n = [];
       }),
       switchMap((m:number[][])=>{
+        //running solver algorithm
       var b:Board = new Board(m);
       var s:Solver = new Solver(b);
       var lId:number = 0;
@@ -72,11 +74,13 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         concatMap(
           (i:usrRtn|SearchNode[])=>
             of(i).pipe(
-              delay((10-this.speed  +1)* 100)
+              delay((10-this.speed  +1)* 100)//step through each step of algorithm slowly
             )
         ),
         tap((x:usrRtn|SearchNode[])=>{
-          if (!Array.isArray(x)){
+          if (!Array.isArray(x)){//while have not reach solution
+
+            //adding/colouring current node algorithm is on
             if(this.n.length!= 0){
               this.addN(x.sn.id);
               this.hm.set(x.sn.id+"", {color: orange, board:x.sn.board.board()});
@@ -84,8 +88,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
               this.addN(x.sn.id);
               this.hm.set(x.sn.id+"", {color:orange, board:x.sn.board.board()});
             }
+            //drawing the edges to the posible nodes from current node
             for(var i of x.posibleNodes){
-              console.log(i.priority, i.moveNo);
               this.l.push({
                 label:""+i.priority,
                 id:"Edge"+ ++lId,
@@ -94,40 +98,40 @@ export class AppComponent implements AfterViewInit, OnDestroy{
               });
             }
             for(var i of x.posibleNodes){
+              //drawing posible nodes
               this.addN(i.id);
               this.hm.set(i.id+"", {color:yellow, board:i.board.board()});
             }
             this.update$.next(true);
             this.zoomToFit$.next(true);
           }else{
-            for(var node of x){
+            for(var node of x){//colour solution path green
               this.hm.set(node.id+"", {board:this.hm.get(node.id+"").board, color:green});
             }
           }
         }),
         scan((acc:usrRtn|SearchNode[],x:usrRtn|SearchNode[])=>{
           if (!Array.isArray(x)){
+            //colour previous node grey (show path taken)
             this.hm.set((acc as usrRtn).sn.id+"", {color:grey, board:(acc as usrRtn).sn.board.board()});
           }
-          acc = x;
+          acc = x;//setting the accumulater of this Observable to the previous node
           return x;
         }),
-        catchError((val)=>{
+        catchError((val)=>{//unsolvable puzzle
           this.modalService.open(NgbdModalContent);
           return of({});
         })
       );
     }));
     this.subscripion.push(
-      alg$.subscribe(()=>{},(err:any)=>{
-        this.modalService.open(NgbdModalContent);
-      })
+      alg$.subscribe()
     );
   }
-  setBoard(matrix:number[][]){
+  setBoard(matrix:number[][]){//recever board matrix from board-input component
     this.matrix$.next(matrix);
   }
-  ngOnDestroy(){
+  ngOnDestroy(){//unsubscribe from all subscriptiong
     for(const sub of this.subscripion){
       sub.unsubscribe();
     }

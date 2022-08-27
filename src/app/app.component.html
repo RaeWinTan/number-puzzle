@@ -1,3 +1,4 @@
+<!--Start of information panel-->
 <div class="container p-0 m-0 infobtn overflow-auto" >
   <svg  data-toggle="collapse" href="#collapseExample"   xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle float-right" viewBox="0 0 16 16">
     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -21,6 +22,19 @@
           <ul class="list-group">
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto w-100">
+                <div class="font-weight-bold">Quick Start</div>
+                  <ol class="list-group">
+                    <li class="list-group-item">Click on <strong class="text-secondary">Random Generate Board</strong>. The grid will be filled with numbers.</li>
+                    <li class="list-group-item">Then click <strong class="text-success">Start</strong></li>
+                    <li class="list-group-item">click on <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                      <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                    </svg>, on the top right corner of this webpage to close this panel</li>
+                  </ol>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto w-100">
                 <div class="font-weight-bold">Filling up board</div>
                   <ol class="list-group">
                     <li class="list-group-item">To overwrite a cell just keep typing numbers. Each cell can at most hold an integer containing two digits any more and the cell will refresh.</li>
@@ -32,17 +46,20 @@
               <div class="ms-2 me-auto w-100">
                 <div class="font-weight-bold">About the graph</div>
                   <ol class="list-group">
-                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#808080" /></svg>
-                      Path taken so far. (or SearchNode that is pruned out of the priority queue of the A* algorithm)
+                    <li class="list-group-item"><svg width="14" height="14"><rect width="14" height="14" style="fill:#808080" /></svg>
+                      -> Path taken so far. (or SearchNode that is pruned out of the priority queue of the A* algorithm)
                     </li>
-                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#E77500" /></svg>
-                      The SearchNode the computer is currently at.
+                    <li class="list-group-item"><svg width="14" height="14"><rect width="14" height="14" style="fill:#E77500" /></svg>
+                      -> The SearchNode the computer is currently at.
                     </li>
-                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#FFB633" /></svg>
-                      Prospective SearchNode the computer may process. (AKA leaf node)
+                    <li class="list-group-item"><svg width="14" height="14"><rect width="14" height="14" style="fill:#FFB633" /></svg>
+                      -> Prospective SearchNode the computer may process. (AKA leaf node)
                     </li>
-                    <li class="list-group-item"><svg width="10" height="10"><rect width="10" height="10" style="fill:#75FF33" /></svg>
-                      The best solution to solve the puzzle.
+                    <li class="list-group-item"><svg width="14" height="14"><rect width="14" height="14" style="fill:#75FF33" /></svg>
+                      -> The best solution to solve the puzzle.
+                    </li>
+                    <li class="list-group-item">
+                      The number along the egdes represents the priority of the prospective node. Where priority = manhattan distance + number of moves taken to get to that search node
                     </li>
                   </ol>
               </div>
@@ -57,6 +74,9 @@
                     <li class="list-group-item">
                       Therefore, it is best to use the random generate board function over the customized board(which may take too many steps to solve).
                     </li>
+                    <li class="list-group-item">
+                      Tough puzzles may take quite long to solve
+                    </li>
                   </ol>
               </div>
             </li>
@@ -64,7 +84,8 @@
           </div>
   </div>
 </div>
-<!-- h-100 d-flex justify-content-center align-items-center-->
+<!--End of infomation panel-->
+
 <div class="container h-100">
   <div class="row h-100">
     <div class="col-12 my-auto">
@@ -81,22 +102,26 @@
             [zoomToFit$]="zoomToFit$"
             [miniMapPosition]="pos"
           >
+          <!--Arrow head for edges-->
           <ng-template #defsTemplate>
             <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
               <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
             </svg:marker>
           </ng-template>
+          <!--Customized nodes-->
           <ng-template #nodeTemplate let-node>
             <svg width= "200" height = "200" viewBox="0 0 200 200">
+              <!--Drawing numbers on the node-->
               <g *ngFor="let row of hm.get(node.id).board; let i = index">
                 <ng-container *ngFor="let col of row; let j = index">
-                  <rect  width="50" height="50" [attr.x]="j * 50" [attr.y]="i * 50" [attr.fill]="hm.get(node.id).color"></rect>
+                  <rect  rx="10" width="50" height="50" [attr.x]="j * 50" [attr.y]="i * 50" [attr.fill]="hm.get(node.id).color"></rect>
                   <text  [attr.x]="j * 50 + 25" [attr.y]="i * 50 + 25" font-family="Verdana" font-size="25" fill="white"  dominant-baseline="middle"
                   text-anchor="middle">{{col}}</text>
                 </ng-container>
               </g>
             </svg>
             </ng-template>
+            <!--Customized edge-->
             <ng-template #linkTemplate let-link>
               <svg:g class="edge">
                 <svg:path  class="line" stroke-width="2" marker-end="url(#arrow)">

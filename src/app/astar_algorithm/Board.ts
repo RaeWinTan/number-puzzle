@@ -3,6 +3,7 @@ export class Board{
   private n:number;
   private t:number[][];
   constructor(tiles:number[][]){
+    //initialize tiles
     this.n = tiles.length;
     this.t = [];
     for(var i:number = 0; i < this.n; i++){
@@ -16,6 +17,7 @@ export class Board{
   board():number[][]{
     return this.t;
   }
+  //another board with one two tiles swiched position
   twin():Board {
     var nt:number[][] = [];
     for (var i = 0; i < this.t.length; i++) {
@@ -36,6 +38,7 @@ export class Board{
     }
     return new Board(nt);
   }
+  //board in string form, for debugging purposes
   toString():String{
     var s:String = "";
     for(var i = 0; i < this.n; i++){
@@ -49,6 +52,7 @@ export class Board{
   dimension():number{
       return this.n;
   }
+  //calculate manhattan distance, (read princeton's docs)
   manhattan():number{
     var m:number = 0;
     for (var i:number = 0; i < this.n; i++) {
@@ -88,21 +92,22 @@ export class Board{
     }
     return c;
   }
+  //check if coordinates is at corner of board
   private corner(b:number[]):boolean {
       return (b[0] == 0 || b[0] == this.n - 1) && (b[1] == 0 || b[1] == this.n - 1);
   }
-
+  //check if coordinates is on side of board
   private sides(b:number[]):boolean {
       return !this.corner(b) && (b[0] == 0 || b[1] == 0 || b[0] == this.n - 1
               || b[1] == this.n - 1);
   }
-
+  //changing position between two tiles
   private swp(curr:number[][], b:number[], r:number, c:number):void {
       var s:number = curr[b[0]][b[1]];
       curr[b[0]][b[1]] = curr[r][c];
       curr[r][c] = s;
   }
-
+  //
   private cornerNeigh(b:number[]):number[][][]{
       var row:number = b[0];
       var col:number = b[1];
@@ -188,6 +193,7 @@ export class Board{
       this.swp(r[3], b, row + 1, col);
       return r;
   }
+  //generating prospective searchnodes grids
   neighbors():Board[]{
     var neigh:Board[] = [];
     var b:number[] = [];
@@ -213,14 +219,14 @@ export class Board{
     }
     return neigh;
   }
-
+  //convert number to coordinate
   private getCoor(num:number):number[] {
         num -= 1;
         return [Math.floor(num / this.n),Math.floor(num % this.n)];
     }
-
-    private getNum(i:number, j:number):number {
-        return i * this.n + j + 1;
-    }
+  //convert coordinate to a number 
+  private getNum(i:number, j:number):number {
+      return i * this.n + j + 1;
+  }
 
 }
