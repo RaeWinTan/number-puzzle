@@ -116,7 +116,7 @@ export class BoardInputComponent implements AfterViewInit, OnDestroy{
     this.subscription.push(
       fromEvent(this.rdmBtn.nativeElement, "click").pipe(
         switchMap(()=>{
-          var num = (Math.floor(Math.random() * 22) + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+          var num = (Math.floor(Math.random() * 19) + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
           //getting random unsolved puzzles from asset folder
           return this.httpClient.get(`assets/puzzle4x4-${num}.txt`, {responseType: 'text'}).pipe(
             tap((data:string)=>{
