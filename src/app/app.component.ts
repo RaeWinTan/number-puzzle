@@ -6,7 +6,7 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import { Board } from './astar_algorithm/Board';
 import { Solver, SearchNode, usrRtn } from './astar_algorithm/Solver';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'ngbd-modal-content',
   template: `
@@ -36,7 +36,6 @@ export class NgbdModalContent {
 export class AppComponent implements AfterViewInit, OnDestroy{
   title = 'number-puzzle';
   update$: Subject<boolean> = new Subject();
-  zoomToFit$:Subject<boolean> = new Subject();
   matrix$:Subject<number[][]> = new Subject<number[][]>();
   subscripion: Subscription[];
   pos:MiniMapPosition = MiniMapPosition.UpperLeft;
@@ -103,11 +102,14 @@ export class AppComponent implements AfterViewInit, OnDestroy{
               this.hm.set(i.id+"", {color:yellow, board:i.board.board()});
             }
             this.update$.next(true);
-            this.zoomToFit$.next(true);
           }else{
             for(var node of x){//colour solution path green
               this.hm.set(node.id+"", {board:this.hm.get(node.id+"").board, color:green});
             }
+            this.toastr.success("Follow the green path", "SOLVED",{
+              positionClass: 'toast-bottom-center',
+              timeOut:5000
+            });
           }
         }),
         scan((acc:usrRtn|SearchNode[],x:usrRtn|SearchNode[])=>{
@@ -137,7 +139,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     }
     this.subscripion = null;
   }
-  constructor(private modalService: NgbModal){
+  constructor(private modalService: NgbModal, private toastr: ToastrService){
     this.l = [];
     this.n = [];
     this.subscripion = [];

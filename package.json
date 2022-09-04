@@ -25,6 +25,7 @@
     "@swimlane/ngx-graph": "^8.0.2",
     "bootstrap": "^5.2.0",
     "d3-scale": "^4.0.2",
+    "ngx-toastr": "^15.0.0",
     "rxjs": "~7.5.0",
     "stack-typescript": "^1.0.4",
     "ts-priority-queue": "^0.1.1",

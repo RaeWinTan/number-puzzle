@@ -15,7 +15,7 @@
       <div class="form-group row">
         <label for="speedInput" class="col-sm-3 col-form-label">SPEED</label>
         <div class="col-sm-9">
-          <input [(ngModel)]="speed" type="range" class="form-range form-control" min="1" max="10" step="1" id="speedInput">
+          <input [(ngModel)]="speed" type="range" class="form-range form-control" min="1" max="5" step="1" id="speedInput">
         </div>
       </div>
         <div class="form-group">
@@ -95,13 +95,15 @@
             [view]="[700, 700]"
             layout="dagreCluster"
             [links]="l"
+            [autoCenter]="true"
+            [autoZoom]="true"
             [update$]="update$"
             [nodes]="n"
             [showMiniMap]="true"
             [miniMapMaxHeight]="200"
-            [zoomToFit$]="zoomToFit$"
             [miniMapPosition]="pos"
           >
+
           <!--Arrow head for edges-->
           <ng-template #defsTemplate>
             <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
